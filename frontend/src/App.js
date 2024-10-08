@@ -12,9 +12,7 @@ function App() {
     <Router>
       <div>
       <Routes>
-        {/* jayathu Route for the Product Management Console */}
         <Route path="/productconsole/*" element={<ProductManageConsole />} />
-        {/* Sanda ru Route for the Product Management Console */}
       </Routes>
       </div>
     </Router>
