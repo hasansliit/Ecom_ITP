@@ -14,6 +14,7 @@ function App() {
       <Routes>
         {/* Route for the Product Management Console */}
         <Route path="/productconsole/*" element={<ProductManageConsole />} />
+        {/* Route for the Product Management Console */}
       </Routes>
       </div>
     </Router>
