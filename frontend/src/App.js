@@ -12,7 +12,6 @@ function App() {
     <Router>
       <div>
       <Routes>
-        {/* Route for the Product Management Console */}
         <Route path="/productconsole/*" element={<ProductManageConsole />} />
       </Routes>
       </div>
