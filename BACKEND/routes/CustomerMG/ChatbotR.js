@@ -1,5 +1,5 @@
 import express from "express";
-import { Chat } from '../model/ChatBot.js'; 
+import { Chat } from '../model/ChatBot.js'; // Ensure the path is correct
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -7,7 +7,7 @@ router.post('/', async (req, res) => {
     
     let botMessage = 'Sorry, I do not understand that. Could you ask something else?';
 
-    // chatbot logic
+    // Simple chatbot logic
     if (userMessage.includes('order status')) {
         botMessage = 'Please provide your order ID for the status.';
     } else if (userMessage.includes('shipping')) {

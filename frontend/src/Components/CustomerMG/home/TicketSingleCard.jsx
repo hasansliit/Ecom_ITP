@@ -57,6 +57,13 @@ const TicketSingleCard = ({ ticket }) => {
         </a>
       </div>
 
+      <div className="mb-6">
+        <h3 className="text-gray-600 font-medium mb-2 text-sm">Description:</h3>
+        <p className="text-gray-700 text-sm leading-relaxed">
+          {ticket.description}
+        </p>
+      </div>
+
       <div className="flex justify-between items-center mt-6 space-x-1">
         {" "}
         {/* Show Details Button */}

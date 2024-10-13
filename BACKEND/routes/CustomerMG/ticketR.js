@@ -1,15 +1,16 @@
 import express from 'express';
 import multer from 'multer';
 import { Ticket } from '../model/TicketM.js';
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'; 
+
 
 // Set up multer for file storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Folder to store files
+    cb(null, 'uploads/'); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Unique filename
+    cb(null, Date.now() + '-' + file.originalname); 
   },
 });
 
@@ -32,64 +33,48 @@ const router = express.Router();
 // Route for saving a new ticket with file upload
 router.post('/', upload.single('attachment'), async (request, response) => {
   try {
-    // Validate input fields
     if (!request.body.title || !request.body.email || !request.body.description) {
-      return response.status(400).send({ message: 'Please send all required fields' });
+      return response.status(400).send({
+        message: 'Send all required fields',
+      });
     }
 
-    // Create attachment object if file is uploaded
-    const attachment = request.file
-      ? {
-          name: request.file.originalname,  // Original file name
-          url: `http://localhost:5579/uploads/${request.file.filename}`  // Public file URL
-        }
-      : null;  // No file uploaded
-
-    // Create a new ticket object
     const newTicket = {
       title: request.body.title,
       email: request.body.email,
       description: request.body.description,
-      attachment: attachment,
+      attachment: request.file ? request.file.path : null, 
     };
 
-    // Save the ticket to the database
     const ticket = await Ticket.create(newTicket);
     return response.status(201).send(ticket);
   } catch (error) {
-    console.error(error.message);
-    return response.status(500).send({ message: 'Error creating ticket' });
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
   }
 });
 
-// Route for updating an existing ticket
+// Route for updating a ticket
 router.put('/:id', upload.single('attachment'), async (request, response) => {
   try {
-    // Validate input fields
+    // Check if required fields are present
     if (!request.body.title || !request.body.email || !request.body.description) {
-      return response.status(400).send({ message: 'Please send all required fields' });
+      return response.status(400).send({
+        message: 'Send all required fields',
+      });
     }
 
-    // Find the ticket by id
     const { id } = request.params;
 
-    // Update attachment if new file is uploaded
-    const updatedAttachment = request.file
-      ? {
-          name: request.file.originalname,
-          url: `http://localhost:5579/uploads/${request.file.filename}`
-        }
-      : undefined;  // No new file uploaded
-
-    // Create updated ticket object
+    // Prepare the updated ticket data
     const updatedTicket = {
       title: request.body.title,
       email: request.body.email,
       description: request.body.description,
-      attachment: updatedAttachment || undefined,  // Update only if new file is uploaded
+      attachment: request.file ? request.file.path : undefined, // Update attachment if new file is uploaded
     };
 
-    // Remove undefined fields (e.g., attachment if not uploaded)
+    // Remove fields with undefined values
     Object.keys(updatedTicket).forEach(key => {
       if (updatedTicket[key] === undefined) {
         delete updatedTicket[key];
@@ -105,8 +90,8 @@ router.put('/:id', upload.single('attachment'), async (request, response) => {
 
     return response.status(200).send({ message: 'Ticket updated successfully', ticket: result });
   } catch (error) {
-    console.error(error.message);
-    return response.status(500).send({ message: 'Error updating ticket' });
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
   }
 });
 
@@ -116,21 +101,17 @@ router.get('/:id', async (request, response) => {
     const { id } = request.params;
     const ticket = await Ticket.findById(id);
 
-    if (!ticket) {
-      return response.status(404).json({ message: 'Ticket not found' });
-    }
-
     return response.status(200).json(ticket);
   } catch (error) {
-    console.error(error.message);
-    return response.status(500).send({ message: 'Error fetching ticket' });
+    console.log(error.message);
+    response.status(500).send({ message: error.message });
   }
 });
 
-// Route for fetching all non-deleted tickets
+// Route for fetching all tickets
 router.get('/', async (req, res) => {
   try {
-    const tickets = await Ticket.find({ deleted: false });
+    const tickets = await Ticket.find({ deleted: false }); 
     return res.status(200).json({
       count: tickets.length,
       data: tickets,
@@ -144,7 +125,7 @@ router.get('/', async (req, res) => {
 // Route for fetching deleted tickets
 router.get('/deleted', async (req, res) => {
   try {
-    const deletedTickets = await Ticket.find({ deleted: true });
+    const deletedTickets = await Ticket.find({ deleted: true }); 
     return res.status(200).json({ count: deletedTickets.length, data: deletedTickets });
   } catch (error) {
     console.error('Error fetching deleted tickets:', error);
@@ -156,18 +137,18 @@ router.get('/deleted', async (req, res) => {
 router.put('/restore/:id', async (req, res) => {
   const { id } = req.params;
 
-  // Validate ticket ID
+  // Validate the ID first
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid ticket ID' });
   }
 
   try {
     const ticket = await Ticket.findByIdAndUpdate(id, { deleted: false }, { new: true });
-
+    
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket not found' });
     }
-
+    
     return res.status(200).json({ message: 'Ticket restored', ticket });
   } catch (error) {
     console.error('Error restoring ticket:', error);
@@ -175,7 +156,7 @@ router.put('/restore/:id', async (req, res) => {
   }
 });
 
-// Route for marking a ticket as deleted (soft delete)
+// Route for marking a ticket as deleted
 router.put('/delete/:id', async (req, res) => {
   try {
     const ticket = await Ticket.findByIdAndUpdate(
@@ -183,23 +164,22 @@ router.put('/delete/:id', async (req, res) => {
       { deleted: true, deletedAt: new Date() }, 
       { new: true }
     );
-    
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket not found' });
     }
-    
-    return res.status(200).json({ message: 'Ticket marked as deleted', ticket });
+    res.status(200).json({ message: 'Ticket marked as deleted', ticket });
   } catch (error) {
     console.error('Error marking ticket as deleted:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
+
 // Optional: Route to delete a ticket permanently
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
-  // Validate ticket ID
+  // Validate the ID first
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid ticket ID' });
   }
@@ -210,7 +190,7 @@ router.delete('/:id', async (req, res) => {
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket not found' });
     }
-
+    
     return res.status(204).send(); // No content response
   } catch (error) {
     console.error('Error deleting ticket:', error);

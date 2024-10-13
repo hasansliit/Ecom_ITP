@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Page,
-  Text,
-  View,
-  Link,
-  Document,
-  StyleSheet,
-} from "@react-pdf/renderer";
+import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
@@ -22,10 +15,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-  },
-  link: {
-    fontSize: 12,
-    color: "blue",
   },
 });
 
@@ -44,15 +33,6 @@ const TicketReport = ({ ticket }) => (
       </View>
       <View style={styles.section}>
         <Text style={styles.text}>Issue: {ticket.description}</Text>
-      </View>
-      <View style={styles.section}>
-        {ticket.attachment ? (
-          <Link style={styles.link} src={ticket.attachment.url}>
-            {ticket.attachment.name}
-          </Link>
-        ) : (
-          <Text style={styles.text}>Attachment: None</Text>
-        )}
       </View>
     </Page>
   </Document>

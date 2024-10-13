@@ -30,6 +30,12 @@ const TicketCard = ({ tickets = [], searchTerm, setSearchTerm }) => {
           <p className="p-4">No tickets found</p>
         )}
       </div>
+      <div>
+        {/* Footer Section */}
+        <footer className="absolute bottom-0 w-full text-[#FFFFFF] text-sm mb-4 opacity-90 bg-[#252B42] p-3 rounded-md text-center">
+          <p>© 2024 Customer Support. All rights reserved.</p>
+        </footer>
+      </div>
     </div>
   );
 };

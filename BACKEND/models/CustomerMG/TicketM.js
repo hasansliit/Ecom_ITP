@@ -14,9 +14,8 @@ const ticketSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    attachment: {
-      name: String, 
-      url: String    
+    attachment: { 
+      type: String, 
     },
     deleted: {
        type: Boolean, 
@@ -26,9 +25,11 @@ const ticketSchema = mongoose.Schema(
       type: Date,
       default: null 
     },
+
   },
   {
     timestamps: true,
   }
 );
+
 export const Ticket = mongoose.model('Ticket', ticketSchema); 
